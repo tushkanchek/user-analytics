@@ -2,12 +2,15 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 	"user-analytics/internal/config"
 	"user-analytics/internal/lib/logger/sl"
 	"user-analytics/internal/lib/logger/slogpretty"
 	"user-analytics/internal/storage/postgres"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -42,13 +45,30 @@ func main() {
 	}
 	
 	_ = db
+	
+	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
 
+	log.Info("starting server", slog.String("adress",cfg.Adress))
+
+	srv := &http.Server{
+		Addr:	 cfg.Adress,
+		Handler: router,
+		ReadTimeout: 	cfg.HTTPServer.Timeout,
+		WriteTimeout: 	cfg.HTTPServer.Timeout,
+		IdleTimeout: 	cfg.HTTPServer.IdleTimeout,
+	}
+	
+	if err:=srv.ListenAndServe();err!=nil{
+		log.Error("failed to start server", sl.Err(err))
+	}
+	
+	log.Error("server stopped")
 
 	//TODO: init kafka
-
-
-	//TODO: init chi router
-
 
 	//TODO: run server
 

@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -19,8 +20,8 @@ type Config struct{
 
 type HTTPServer struct{
 	Adress		string `yaml:"adress" env-default:"localhost:8084"`
-	Timeout 	string `yaml:"timeout" env-default:"4s"`
-	IdleTimeout	string `yaml:"idle_timeout" env-default:"60s"`
+	Timeout 	time.Duration `yaml:"timeout" env-default:"4s"`
+	IdleTimeout	time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
 type DBConfig struct{
