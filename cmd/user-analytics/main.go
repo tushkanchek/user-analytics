@@ -35,7 +35,13 @@ func main() {
 	)
 	log.Debug("debug messages enabled")
 
+	db, err := postgres.New(cfg.DBConfig)
 
+	if err!=nil{
+		log.Error("failed to init storage", sl.Err(err))
+	}
+	
+	_ = db
 
 
 	//TODO: init kafka
